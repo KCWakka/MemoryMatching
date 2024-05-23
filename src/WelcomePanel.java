@@ -47,6 +47,8 @@ public class WelcomePanel extends JPanel implements ActionListener {
         g.setFont(new Font("Times New Roman", Font.BOLD, 16));
         g.drawString("P1's Name", 20, 65);
         g.drawString("P2's Name", 20, 90);
+        g.drawString("Enter the theme you want:",80, 105);
+        g.drawString("pokemon or tarot", 95,120);
         name1.setLocation(100, 50);
         name2.setLocation(100, 75);
         theme.setLocation(100, 125);
@@ -60,13 +62,18 @@ public class WelcomePanel extends JPanel implements ActionListener {
         if (e.getSource() instanceof JButton) {
             JButton button = (JButton) e.getSource();
             if (button == submitButton) {
-                if (name1.getText().equals("") || name2.getText().equals("") || theme.getText().equals("") || name1.getText().equals("Please enter all the box to enter the game!")) {
-                    name1.setText("Please enter all the box to enter the game!");
+                if (name1.getText().equals("") || name2.getText().equals("") || theme.getText().equals("") || name1.getText().equals("Fill all the box!")) {
+                    name1.setText("Fill all the box!");
                 } else {
-                    String p1Name = name1.getText();
-                    String p2Name = name2.getText();
-                    String themes = theme.getText().toLowerCase();
-                    enclosingFrame.setVisible(false);
+                    if (theme.getText().toLowerCase().equals("tarot") || theme.getText().toLowerCase().equals("pokemon")) {
+                        String p1Name = name1.getText();
+                        String p2Name = name2.getText();
+                        String themes = theme.getText().toLowerCase();
+                        MainFrame f = new MainFrame(p1Name, p2Name, themes);
+                        enclosingFrame.setVisible(false);
+                    } else {
+                        theme.setText("Invalid theme!");
+                    }
                 }
             } else if (button == clearButton) {
                 name1.setText("");
