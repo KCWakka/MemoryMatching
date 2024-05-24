@@ -21,10 +21,10 @@ public class Card {
         yCoord = y;
         isFront = false;
     }
-    public double getXCoord() {
+    public int getXCoord() {
         return xCoord;
     }
-    public double getYCoord() {
+    public int getYCoord() {
         return yCoord;
     }
     public BufferedImage getImage() {
