@@ -10,6 +10,7 @@ public class Player {
         player2Name = p2Name;
         p1score = 0;
         p2score = 0;
+        isPlayer1 = true;
     }
     public String getPlayer1Name() {
         return player1Name;
@@ -33,4 +34,7 @@ public class Player {
             p2score++;
         }
     }
+     public void setIsPlayer1() {
+        isPlayer1 = !isPlayer1;
+     }
 }
