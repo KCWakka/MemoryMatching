@@ -8,8 +8,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import static java.lang.Thread.sleep;
 
-public class GraphicsPanel extends JPanel implements MouseListener {
+public class GraphicsPanel extends JPanel implements MouseListener, ActionListener {
     private BufferedImage background;
+    private JButton resetButton;
     private Player players;
     private ArrayList<Card> cards;
     private boolean isTarot;
@@ -18,6 +19,7 @@ public class GraphicsPanel extends JPanel implements MouseListener {
     private Timer timer;
     private int time;
     private boolean gameOver;
+    private boolean wrong;
     public GraphicsPanel(String p1Name, String p2Name, String theme) {
         int x = 10;
         int y = 60;
@@ -41,6 +43,10 @@ public class GraphicsPanel extends JPanel implements MouseListener {
         card1 = -1;
         card2 = -1;
         gameOver = false;
+        timer = new Timer(1000, this);
+        timer.start();
+        time = 0;
+        wrong = false;
         if (!isTarot) {
            for (int i = 10; i < 18; i++) {
                String str = "src/";
@@ -75,26 +81,47 @@ public class GraphicsPanel extends JPanel implements MouseListener {
     }
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawImage(background, 0, 0 , null);
-        g.setFont(new Font("Times New Roman", Font.BOLD, 35));
-        if (isTarot) {
-            g.setColor(Color.WHITE);
+        if (gameOver) {
+            try {
+                background = ImageIO.read(new File("src/duolingo.png"));
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+            g.drawImage(background, 0, 0, null);
+            g.setColor(Color.white);
         } else {
-            g.setColor(Color.RED);
-        }
-        g.drawString(players.getPlayer1Name() + ": " + players.getP1score(), 1, 30);
-        g.drawString(players.getPlayer2Name() + ": " + players.getP2score(), 700, 30);
-        if (players.isPlayer1()) {
-            g.drawString(players.getPlayer1Name() + "'s turn! ", 350, 30);
-        } else {
-            g.drawString(players.getPlayer2Name() + "'s turn! ", 350, 30);
-        }
-        for (int i = 0; i < cards.size(); i++) {
-            if (cards.get(i).isFront()) {
-                g.drawImage(cards.get(i).getImage(), cards.get(i).getXCoord(), cards.get(i).getYCoord(), null);
+            gameOver = true;
+            super.paintComponent(g);
+            g.drawImage(background, 0, 0, null);
+            g.setFont(new Font("Times New Roman", Font.BOLD, 35));
+            if (isTarot) {
+                g.setColor(Color.WHITE);
             } else {
-                g.drawImage(cards.get(i).getBack(), cards.get(i).getXCoord(), cards.get(i).getYCoord(), null);
+                g.setColor(Color.RED);
+            }
+            g.drawString(players.getPlayer1Name() + ": " + players.getP1score(), 1, 30);
+            g.drawString(players.getPlayer2Name() + ": " + players.getP2score(), 700, 30);
+            if (players.isPlayer1()) {
+                g.drawString(players.getPlayer1Name() + "'s turn! ", 350, 30);
+            } else {
+                g.drawString(players.getPlayer2Name() + "'s turn! ", 350, 30);
+            }
+            for (int i = 0; i < cards.size(); i++) {
+                if (!cards.get(i).isFront()) {
+                    g.drawImage(cards.get(i).getImage(), cards.get(i).getXCoord(), cards.get(i).getYCoord(), null);
+                } else {
+                    g.drawImage(cards.get(i).getBack(), cards.get(i).getXCoord(), cards.get(i).getYCoord(), null);
+                    gameOver = false;
+                }
+            }
+            if (time >= 2) {
+                cards.get(card1).setIsFront();
+                cards.get(card2).setIsFront();
+                players.setIsPlayer1();
+                card1 = -1;
+                card2 = -1;
+                wrong = false;
+                time = 0;
             }
         }
     }
@@ -111,31 +138,35 @@ public class GraphicsPanel extends JPanel implements MouseListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        Point mouseClickLocation = e.getPoint();
-        boolean onCard = false;
-        int index = 0;
-        for (int i = 0; i < cards.size(); i++) {
-            if (cards.get(i).cardRect().contains(mouseClickLocation)) {
-                onCard = true;
-                index = i;
-            }
-        }
-        if (onCard) {
-            if (card1 == -1) {
-                card1 = index;
-                cards.get(index).setIsFront();
-            } else {
-                card2 = index;
-                cards.get(index).setIsFront();
-                if (bufferedImagesEqual(cards.get(card1).getImage(), cards.get(card2).getImage())) {
-                    players.addScore();
-                } else {
-                    cards.get(card1).setIsFront();
-                    cards.get(card2).setIsFront();
-                    players.setIsPlayer1();
+        if (!wrong) {
+            Point mouseClickLocation = e.getPoint();
+            boolean onCard = false;
+            int index = -1;
+            for (int i = 0; i < cards.size(); i++) {
+                if (cards.get(i).cardRect().contains(mouseClickLocation)) {
+                    onCard = true;
+                    if (i != card1) {
+                        index = i;
+                    }
                 }
-                card1 = -1;
-                card2 = -1;
+            }
+            if (onCard) {
+                if (card1 == -1) {
+                    card1 = index;
+                    cards.get(index).setIsFront();
+                } else {
+                    if (index != -1) {
+                        card2 = index;
+                        cards.get(index).setIsFront();
+                        if (cards.get(card1).getName().equals(cards.get(card2).getName())) {
+                            players.addScore();
+                            card1 = -1;
+                            card2 = -1;
+                        } else {
+                            wrong = true;
+                        }
+                    }
+                }
             }
         }
     }
@@ -162,5 +193,14 @@ public class GraphicsPanel extends JPanel implements MouseListener {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() instanceof Timer) {
+            if (wrong) {
+                time++;
+            }
+        }
     }
 }

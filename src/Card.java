@@ -10,6 +10,7 @@ public class Card {
     private int xCoord;
     private int yCoord;
     private boolean isFront;
+    private String name;
     public Card(String image, String back, int x, int y) {
         try {
             this.image = ImageIO.read(new File(image));
@@ -20,6 +21,7 @@ public class Card {
         xCoord = x;
         yCoord = y;
         isFront = false;
+        name = image;
     }
     public int getXCoord() {
         return xCoord;
@@ -33,6 +35,11 @@ public class Card {
     public BufferedImage getBack() {
         return back;
     }
+
+    public String getName() {
+        return name;
+    }
+
     public boolean isFront() {
         return isFront;
     }
