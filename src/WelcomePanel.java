@@ -1,13 +1,18 @@
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class WelcomePanel extends JPanel implements ActionListener {
+public class WelcomePanel extends JPanel implements ActionListener, MouseListener {
     private JTextField name1;
     private JTextField name2;
     private JTextField theme;
@@ -16,6 +21,7 @@ public class WelcomePanel extends JPanel implements ActionListener {
     private JFrame enclosingFrame;
     private BufferedImage rick;
     private BufferedImage image;
+    private Clip rickRoll;
     public WelcomePanel (JFrame frame) {
         enclosingFrame = frame;
         name1 = new JTextField(10);
@@ -24,8 +30,8 @@ public class WelcomePanel extends JPanel implements ActionListener {
         submitButton = new JButton("Submit");
         clearButton = new JButton("Clear");
         try {
-            rick = ImageIO.read(new File("src/Rick.png"));
-            image = ImageIO.read(new File("src/Game.png"));
+            rick = ImageIO.read(new File("src/image/Rick.png"));
+            image = ImageIO.read(new File("src/image/Game.png"));
         } catch (IOException e) {
             System.out.println(e);
         }
@@ -80,6 +86,50 @@ public class WelcomePanel extends JPanel implements ActionListener {
                 name2.setText("");
                 theme.setText("");
             }
+        }
+    }
+    private Rectangle rickRect() {
+        int imageHeight = rick.getHeight();
+        int imageWidth = rick.getWidth();
+        Rectangle rect = new Rectangle(250, 150, imageWidth, imageHeight);
+        return rect;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        Point mouseClickLocation = e.getPoint();
+        if (rickRect().contains(mouseClickLocation)) {
+            System.out.println("HI");
+        }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+    private void playRickRoll() {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/RickRoll.wav").getAbsoluteFile());
+            rickRoll = AudioSystem.getClip();
+            rickRoll.open(audioInputStream);
+            rickRoll.start();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }

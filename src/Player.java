@@ -37,4 +37,8 @@ public class Player {
      public void setIsPlayer1() {
         isPlayer1 = !isPlayer1;
      }
+     public void resetScore() {
+        p1score = 0;
+        p2score = 0;
+     }
 }
