@@ -22,6 +22,8 @@ public class GraphicsPanel extends JPanel implements MouseListener, ActionListen
     private int time;
     private boolean gameOver;
     private boolean wrong;
+    private Clip music;
+    private boolean once;
     public GraphicsPanel(String p1Name, String p2Name, String theme) {
         int x = 10;
         int y = 60;
@@ -49,9 +51,11 @@ public class GraphicsPanel extends JPanel implements MouseListener, ActionListen
         resetButton.setVisible(false);
         add(resetButton);
         resetButton.addActionListener(this);
+        resetButton.setFocusable(false);
         Dimension dimension = new Dimension(200, 150);
         resetButton.setPreferredSize(dimension);
         timer = new Timer(1000, this);
+        once = true;
         timer.start();
         time = 0;
         wrong = false;
@@ -86,16 +90,22 @@ public class GraphicsPanel extends JPanel implements MouseListener, ActionListen
             x+= 250;
         }
         addMouseListener(this);
+        playMusic();
     }
     @Override
     public void paintComponent(Graphics g) {
         if (gameOver) {
+            music.stop();
+            music.close();
             try {
                 background = ImageIO.read(new File("src/image/duolingo.png"));
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }
             g.drawImage(background, 0, 0, null);
+            if (once) {
+                playGunShot();
+            }
             g.setFont(new Font("Times New Roman", Font.BOLD, 55));
             g.setColor(Color.white);
             if (players.getP1score() > players.getP2score()) {
@@ -107,7 +117,12 @@ public class GraphicsPanel extends JPanel implements MouseListener, ActionListen
             }
             resetButton.setVisible(true);
             resetButton.setLocation(350,500);
+            if (once) {
+                playMusic();
+                once = false;
+            }
         } else {
+            once = true;
             resetButton.setVisible(false);
             gameOver = true;
             super.paintComponent(g);
@@ -242,7 +257,18 @@ public class GraphicsPanel extends JPanel implements MouseListener, ActionListen
                     cards.add(temp.remove(random));
                     x+= 250;
                 }
+                try {
+                    if (!isTarot) {
+                        background = ImageIO.read(new File("src/image/pokemon.jpg"));
+                    } else {
+                        background = ImageIO.read(new File("src/image/tarot.jpeg"));
+                    }
+                } catch (IOException f) {
+                    System.out.println(f.getMessage());
+                }
                 players.resetScore();
+                music.stop();
+                music.close();
             }
         } else if (e.getSource() instanceof Timer) {
             if (wrong) {
@@ -253,10 +279,37 @@ public class GraphicsPanel extends JPanel implements MouseListener, ActionListen
 
     private void playCardFlip() {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/CardFlip.wav").getAbsoluteFile());
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/Sound/CardFlip.wav").getAbsoluteFile());
             Clip cardFlipClip = AudioSystem.getClip();
             cardFlipClip.open(audioInputStream);
             cardFlipClip.start();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    private void playGunShot() {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/Sound/GunShot.wav").getAbsoluteFile());
+            Clip gunShot = AudioSystem.getClip();
+            gunShot.open(audioInputStream);
+            gunShot.start();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    private void playMusic() {
+        try {
+            AudioInputStream audioInputStream;
+            if (isTarot && !gameOver) {
+                audioInputStream = AudioSystem.getAudioInputStream(new File("src/Sound/StarrySky.wav").getAbsoluteFile());
+            } else if (gameOver) {
+                audioInputStream = AudioSystem.getAudioInputStream(new File("src/Sound/spooky.wav").getAbsoluteFile());
+            } else{
+                audioInputStream = AudioSystem.getAudioInputStream(new File("src/Sound/Pokemon.wav").getAbsoluteFile());
+            }
+            music = AudioSystem.getClip();
+            music.open(audioInputStream);
+            music.start();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

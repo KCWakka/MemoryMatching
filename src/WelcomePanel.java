@@ -42,6 +42,7 @@ public class WelcomePanel extends JPanel implements ActionListener, MouseListene
         add(clearButton);
         submitButton.addActionListener(this);
         clearButton.addActionListener(this);
+        addMouseListener(this);
     }
 
     @Override
@@ -77,6 +78,10 @@ public class WelcomePanel extends JPanel implements ActionListener, MouseListene
                         String themes = theme.getText().toLowerCase();
                         MainFrame f = new MainFrame(p1Name, p2Name, themes);
                         enclosingFrame.setVisible(false);
+                        if (rickRoll != null) {
+                            rickRoll.stop();
+                            rickRoll.close();
+                        }
                     } else {
                         theme.setText("Invalid theme!");
                     }
@@ -109,7 +114,7 @@ public class WelcomePanel extends JPanel implements ActionListener, MouseListene
     public void mouseReleased(MouseEvent e) {
         Point mouseClickLocation = e.getPoint();
         if (rickRect().contains(mouseClickLocation)) {
-            System.out.println("HI");
+            playRickRoll();
         }
     }
 
@@ -124,7 +129,7 @@ public class WelcomePanel extends JPanel implements ActionListener, MouseListene
     }
     private void playRickRoll() {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/RickRoll.wav").getAbsoluteFile());
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/Sound/RickRoll.wav").getAbsoluteFile());
             rickRoll = AudioSystem.getClip();
             rickRoll.open(audioInputStream);
             rickRoll.start();
