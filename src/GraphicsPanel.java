@@ -108,7 +108,7 @@ public class GraphicsPanel extends JPanel implements MouseListener, ActionListen
                 g.drawString(players.getPlayer1Name() + " win!", 250, 180);
             } else if (players.getP1score() < players.getP2score()) {
                 g.drawString("Game Over! ",300, 130);
-                g.drawString(players.getPlayer1Name() + " win!", 250, 180);
+                g.drawString(players.getPlayer2Name() + " win!", 250, 180);
             } else {
                 g.drawString("Game Over! It was a tie!", 170, 130);
             }
