@@ -141,7 +141,7 @@ public class GraphicsPanel extends JPanel implements MouseListener, ActionListen
                 g.drawString(players.getPlayer2Name() + "'s turn! ", 350, 30);
             }
             for (int i = 0; i < cards.size(); i++) {
-                if (!cards.get(i).isFront()) {
+                if (cards.get(i).isFront()) {
                     g.drawImage(cards.get(i).getImage(), cards.get(i).getXCoord(), cards.get(i).getYCoord(), null);
                 } else {
                     g.drawImage(cards.get(i).getBack(), cards.get(i).getXCoord(), cards.get(i).getYCoord(), null);
