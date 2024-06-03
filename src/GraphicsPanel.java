@@ -95,29 +95,29 @@ public class GraphicsPanel extends JPanel implements MouseListener, ActionListen
     @Override
     public void paintComponent(Graphics g) {
         if (gameOver) {
-            music.stop();
-            music.close();
             try {
                 background = ImageIO.read(new File("src/image/duolingo.png"));
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }
             g.drawImage(background, 0, 0, null);
-            if (once) {
-                playGunShot();
-            }
             g.setFont(new Font("Times New Roman", Font.BOLD, 55));
             g.setColor(Color.white);
             if (players.getP1score() > players.getP2score()) {
-                g.drawString("Game Over! " + players.getPlayer1Name() + " win!", 140, 130);
+                g.drawString("Game Over! ", 300, 130);
+                g.drawString(players.getPlayer1Name() + " win!", 250, 180);
             } else if (players.getP1score() < players.getP2score()) {
-                g.drawString("Game Over! " + players.getPlayer2Name() + " win!" ,140, 130);
+                g.drawString("Game Over! ",300, 130);
+                g.drawString(players.getPlayer1Name() + " win!", 250, 180);
             } else {
-                g.drawString("Game Over! It was a tie!", 180, 130);
+                g.drawString("Game Over! It was a tie!", 170, 130);
             }
             resetButton.setVisible(true);
             resetButton.setLocation(350,500);
             if (once) {
+                music.stop();
+                music.close();
+                playGunShot();
                 playMusic();
                 once = false;
             }
@@ -141,7 +141,7 @@ public class GraphicsPanel extends JPanel implements MouseListener, ActionListen
                 g.drawString(players.getPlayer2Name() + "'s turn! ", 350, 30);
             }
             for (int i = 0; i < cards.size(); i++) {
-                if (cards.get(i).isFront()) {
+                if (!cards.get(i).isFront()) {
                     g.drawImage(cards.get(i).getImage(), cards.get(i).getXCoord(), cards.get(i).getYCoord(), null);
                 } else {
                     g.drawImage(cards.get(i).getBack(), cards.get(i).getXCoord(), cards.get(i).getYCoord(), null);
@@ -178,7 +178,7 @@ public class GraphicsPanel extends JPanel implements MouseListener, ActionListen
             boolean onCard = false;
             int index = -1;
             for (int i = 0; i < cards.size(); i++) {
-                if (cards.get(i).cardRect().contains(mouseClickLocation)) {
+                if (cards.get(i).cardRect().contains(mouseClickLocation) && !cards.get(i).isFront()) {
                     onCard = true;
                     if (i != card1) {
                         index = i;
@@ -269,6 +269,7 @@ public class GraphicsPanel extends JPanel implements MouseListener, ActionListen
                 players.resetScore();
                 music.stop();
                 music.close();
+                playMusic();
             }
         } else if (e.getSource() instanceof Timer) {
             if (wrong) {
