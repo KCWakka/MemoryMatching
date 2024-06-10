@@ -3,7 +3,7 @@ import javax.swing.*;
 public class MainFrame implements Runnable{
     private GraphicsPanel panel;
     public MainFrame(String p1Name, String p2Name, String theme) {
-        JFrame frame = new JFrame("Memory Matching");
+        JFrame frame = new JFrame("MM Mystery");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(900, 1000); // 540 height of image + 40 for window menu bar
         frame.setLocationRelativeTo(null); // auto-centers frame in screen

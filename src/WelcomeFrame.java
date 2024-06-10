@@ -3,7 +3,7 @@ import javax.swing.*;
 public class WelcomeFrame {
     private WelcomePanel panel;
     public WelcomeFrame() {
-        JFrame frame = new JFrame("Welcome");
+        JFrame frame = new JFrame("Welcome to MM Mystery!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setSize(350, 250);
